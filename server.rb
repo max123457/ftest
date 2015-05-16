@@ -17,9 +17,9 @@ SETTINGS = {
     "endpoint": "http://api.sponsorpay.com/feed/v1/offers.json"
 }
 
-def hashkey(params)
+def hashkey(params, api_key=SETTINGS[:api_key])
   str = params.sort_by{|k,_| k}.map{|x| "#{x[0]}=#{URI::encode(x[1].to_s)}"}.join("&")
-  signed_str = Digest::SHA1.hexdigest("#{str}&#{SETTINGS[:api_key]}")
+  signed_str = Digest::SHA1.hexdigest("#{str}&#{api_key}")
   return signed_str
 end
 

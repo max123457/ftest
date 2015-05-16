@@ -1,7 +1,7 @@
 task default: %w[test]
 
 task :test do
-  ruby "test/unittest.rb"
+  ruby "./server_test.rb"
 end
 
 task :deploy do
