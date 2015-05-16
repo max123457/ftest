@@ -28,6 +28,10 @@ class Hello < Goliath::API
   use Goliath::Rack::Params
 
   def response(env)
+    if env['REQUEST_PATH'] != '/offers.json'
+        response = File.open('./index.html', 'rb').read()
+        return [200, {'Content-Type' => 'text/html; charset=UTF-8'}, response]
+    end
     params = ['uid', 'pub0', 'page'].map{|p| {p.to_sym => env.params[p]} if env.params[p]}.flatten.compact.inject(:merge)
     if params.size != 3
         raise

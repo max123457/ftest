@@ -1,0 +1,91 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+   <HEAD>
+      <TITLE>Fyber offers</TITLE>
+     <script async defer="defer" src="//cdn.jsdelivr.net/jquery/2.1.4/jquery.min.js" type="text/javascript" onload="main()"></script>
+   </HEAD>
+   <BODY>
+    <p>Fyber offers test</p>
+    <form>
+        uid:<br>
+        <input type="text" name="uid">
+        <br>
+        pub0:<br>
+        <input type="text" name="pub0">
+        <br>
+        page:<br>
+        <input type="text" name="page">
+        <br>
+        <input type="submit" value="Submit">
+    </form>
+    <div id=offers>
+    </div>
+
+      <div id="template_offers" style="visibility: hidden;display: none;">
+        <div>
+            <span role="title"></span>
+            <img role="thumbnail"></span>
+            <span role="payout"></span>
+        </div>
+      </div>
+
+      <div id="template_no_offers" style="visibility: hidden;display: none;">
+        <span>No offers available</span>
+      </div>
+
+      <script>
+        function formToJSON( selector )
+            {
+                 var form = {};
+                 $(selector).find(':input[name]:enabled').each( function() {
+                     var self = $(this);
+                     var name = self.attr('name');
+                     if (form[name]) {
+                        form[name] = form[name] + ',' + self.val();
+                     }
+                     else {
+                        form[name] = self.val();
+                     }
+                 });
+
+                 return form;
+            };
+
+        function success(data, status, xhr) {
+            var block = $("#offers")
+            block.empty()
+            if (data.status == "OK") {
+                offers = data.offers
+                for (var i = offers.length; i--; ) {
+                    offer_tmpl = $("#template_offers").children().clone(true,true)
+                    offer_tmpl.find("span[role='title']").text(offers[i].title)
+                    offer_tmpl.find("img[role='thumbnail']").attr('src', offers[i].thumbnail.lowres).attr('srcset', offers[i].thumbnail.hires + ' 2x')
+                    offer_tmpl.find("span[role='payout']").text(offers[i].payout)
+                    block.hide().append(offer_tmpl).fadeIn(500)
+                }
+            } else {
+                no_offers()
+            }
+        }
+
+        function no_offers(){
+            $("#offers").hide().append($("#template_no_offers").children().clone(true,true)).fadeIn(500)
+        }
+
+        function main(){
+            $(document).ready(function() {
+                console.log("ready!");
+                
+                $("form").submit(function( event ) {
+                    var data = formToJSON($(this))
+                    $("#offers").empty()
+                    $.post("/offers.json", data, success).fail(no_offers)
+                    return false
+                })
+            })
+        }
+      </script>
+   </BODY>
+</HTML>
+
