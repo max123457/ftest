@@ -35,6 +35,7 @@
       </div>
 
       <script>
+        var POST_URL = 'http://ez1.kremenev.com:9000/offers.json'
         function formToJSON( selector )
             {
                  var form = {};
@@ -80,7 +81,7 @@
                 $("form").submit(function( event ) {
                     var data = formToJSON($(this))
                     $("#offers").empty()
-                    $.post("/offers.json", data, success).fail(no_offers)
+                    $.post(POST_URL, data, success).fail(no_offers)
                     return false
                 })
             })

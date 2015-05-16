@@ -32,6 +32,13 @@ class Hello < Goliath::API
         response = File.open('./index.html', 'rb').read()
         return [200, {'Content-Type' => 'text/html; charset=UTF-8'}, response]
     end
+    if env['REQUEST_METHOD'] == 'OPTIONS'
+        return [200, cors_headers, 'ok']    
+    end
+    
+    headers = {}
+    headers.merge!(cors_headers)
+
     params = ['uid', 'pub0', 'page'].map{|p| {p.to_sym => env.params[p]} if env.params[p]}.flatten.compact.inject(:merge)
     if params.size != 3
         raise
@@ -42,7 +49,7 @@ class Hello < Goliath::API
     url = "#{SETTINGS[:endpoint]}?#{parameterize(params)}"
     req = EM::HttpRequest.new(url).get
     if req.response_header.status != 200
-        return [req.response_header.status, {}, req.response]
+        return [req.response_header.status, headers, req.response]
     end
     data = JSON.parse(req.response)
     out = case data['code']
@@ -53,8 +60,6 @@ class Hello < Goliath::API
         else
             {status: 'Failed'}
     end
-    headers = {}
-    headers.merge!(cors_headers)
     response = JSON.generate(out)
     if env.params['callback']
         headers['Content-Type'] = 'application/javascript; charset=utf-8'
@@ -72,7 +77,9 @@ class Hello < Goliath::API
   def cors_headers
     {
      "Access-Control-Allow-Origin": "*",
-     "Access-Control-Request-Method": "*",
+     "Access-Control-Request-Method": "POST, GET, OPTIONS",
+     "Access-Control-Allow-Headers": "Content-type",
+     "Access-Control-Max-Age": '1728000',
      "Content-Type": "application/json; charset=utf-8",
     }
   end
