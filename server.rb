@@ -13,7 +13,7 @@ SETTINGS = {
         "ip": "109.235.143.113",
         "offer_types": 112
     },
-    "api_key": "b07a12df7d52e6c118e5d47d3f9e60135b109a1f", 
+    "api_key": ENV['api_key'], 
     "endpoint": "http://api.sponsorpay.com/feed/v1/offers.json"
 }
 

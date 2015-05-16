@@ -148,7 +148,7 @@ Percentage of the requests served within a certain time (ms)
  
  ```
  check process fyber pidfile /home/user/projects/ftest/server.pid
-    start program = "/bin/bash -l -c 'cd /home/user/projects/ftest/ftest && source ../profile && ruby server.rb -e production -d -l /home/user/projects/ftest/server.log -P /home/user/projects/ftest/server.pid -v'"
+    start program = "/bin/bash -l -c 'cd /home/user/projects/ftest/ftest && source ../profile && api_key=xxxxxxxxxx ruby server.rb -e production -d -l /home/user/projects/ftest/server.log -P /home/user/projects/ftest/server.pid -v'"
        as uid user and gid user
     stop program = "/bin/bash -c '/bin/kill `cat /home/user/projects/ftest/server.pid`'"
     if totalmemory is greater than 64 MB for 5 cycles then restart
