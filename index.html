@@ -63,7 +63,7 @@
                     offer_tmpl.find("span[role='title']").text(offers[i].title)
                     offer_tmpl.find("img[role='thumbnail']").attr('src', offers[i].thumbnail.lowres).attr('srcset', offers[i].thumbnail.hires + ' 2x')
                     offer_tmpl.find("span[role='payout']").text(offers[i].payout)
-                    block.hide().append(offer_tmpl).fadeIn(500)
+                    block.hide().append(offer_tmpl).fadeIn(100)
                 }
             } else {
                 no_offers()
@@ -71,7 +71,7 @@
         }
 
         function no_offers(){
-            $("#offers").hide().append($("#template_no_offers").children().clone(true,true)).fadeIn(500)
+            $("#offers").hide().append($("#template_no_offers").children().clone(true,true)).fadeIn(100)
         }
 
         function main(){

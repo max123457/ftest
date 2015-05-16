@@ -51,7 +51,12 @@ class Hello < Goliath::API
     if req.response_header.status != 200
         return [req.response_header.status, headers, req.response]
     end
-    data = JSON.parse(req.response)
+    begin
+        data = JSON.parse(req.response)
+    rescue Exception => err
+        puts("parse err #{err}")
+        return [500, headers, 'failed']
+    end
     out = case data['code']
         when 'OK'
             {status: data['code'], offers: data['offers']}
