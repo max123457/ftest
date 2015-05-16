@@ -1,7 +1,20 @@
-test url http://max123457.github.io/ftest/
+Test url: [http://max123457.github.io/ftest/](http://max123457.github.io/ftest/)
+---
 
-Benchmarks
+Benchmarks:
+---
 
+**TLDR**:
+
+| Requests Country | Concurency Level| AVG response time(ms) | Full Time(s)  |
+|:----------------:|:---------------:|:---------------------:|:-------------:|
+|      10          | 1               | 1349.841              | 13.498        |
+|      10          | 100             | 1449.496              | 14.495        |
+|      50          | 1000            | 2526.009              | 50.520        |
+
+**Full logs**:
+
+```
 ab -c1 -n10 "http://0.0.0.0:9000/offers.json?uid=1&pub0=1&page=1"
 
 Server Software:        Goliath
@@ -42,11 +55,9 @@ Percentage of the requests served within a certain time (ms)
   99%   1609
  100%   1609 (longest request)
 
+```
 
-
-
-
-
+```
 ab -c10 -n100 "http://0.0.0.0:9000/offers.json?uid=1&pub0=1&page=1"
 
 Server Software:        Goliath
@@ -87,8 +98,9 @@ Percentage of the requests served within a certain time (ms)
   98%   2125
   99%   2394
  100%   2394 (longest request)
+```
 
-
+```
 ab -c50 -n1000 "http://0.0.0.0:9000/offers.json?uid=1&pub0=1&page=1"
 
 erver Software:        Goliath
@@ -129,3 +141,34 @@ Percentage of the requests served within a certain time (ms)
   98%   6810
   99%   7876
  100%  11695 (longest request)
+ ```
+ 
+ Monit Config:
+ ---
+ 
+ ```
+ check process fyber pidfile /home/user/projects/ftest/server.pid
+    start program = "/bin/bash -l -c 'cd /home/user/projects/ftest/ftest && source ../profile && ruby server.rb -e production -d -l /home/user/projects/ftest/server.log -P /home/user/projects/ftest/server.pid -v'"
+       as uid user and gid user
+    stop program = "/bin/bash -c '/bin/kill `cat /home/user/projects/ftest/server.pid`'"
+    if totalmemory is greater than 64 MB for 5 cycles then restart
+    if totalcpu is greater than 60% for 5 cycles then restart
+    if children is greater than 64 for 5 cycles then restart
+
+check file fyber_restart path /home/user/projects/ftest/restart.txt
+    if changed timestamp then exec "/bin/bash -c '/bin/kill `cat /home/user/projects/ftest/server.pid`'
+    
+ ```
+ 
+ Deploy Command:
+ ---
+ 
+ ```
+ HOST="user@example.com" rake deploy
+ ```
+ 
+ Test Command:
+ ---
+ ```
+ rake
+ ```
