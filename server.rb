@@ -32,16 +32,16 @@ class Hello < Goliath::API
         response = File.open('./index.html', 'rb').read()
         return [200, {'Content-Type' => 'text/html; charset=UTF-8'}, response]
     end
+    headers = {}
+    headers.merge!(cors_headers)
+    
     if env['REQUEST_METHOD'] == 'OPTIONS'
         return [200, cors_headers, 'ok']    
     end
     
-    headers = {}
-    headers.merge!(cors_headers)
-
     params = ['uid', 'pub0', 'page'].map{|p| {p.to_sym => env.params[p]} if env.params[p]}.flatten.compact.inject(:merge)
     if params.size != 3
-        raise
+        return [400, headers, 'some params not present']
     end
     params.merge!(SETTINGS[:params])
     params[:timestamp] = Time.now.utc.to_i
@@ -54,17 +54,9 @@ class Hello < Goliath::API
     begin
         data = JSON.parse(req.response)
     rescue Exception => err
-        puts("parse err #{err}")
-        return [500, headers, 'failed']
+        return [500, headers, "failed #{err}"]
     end
-    out = case data['code']
-        when 'OK'
-            {status: data['code'], offers: data['offers']}
-        when 'NO_CONTENT'
-            {status: data['code']}
-        else
-            {status: 'Failed'}
-    end
+    out = {status: data['code'] || 'failed', offers: data['offers'] || []}
     response = JSON.generate(out)
     if env.params['callback']
         headers['Content-Type'] = 'application/javascript; charset=utf-8'
