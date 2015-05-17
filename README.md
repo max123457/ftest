@@ -1,6 +1,10 @@
 Test url: [http://max123457.github.io/ftest/](http://max123457.github.io/ftest/)
 ---
 
+Design:
+---
+Why I'm using Goliath? Because for current task it more right using async code, so how main work of this app is just be a proxy to another api. And I don't want that one connect will wait than another connect would be finished plus it saves resources. Also I always wanted to try async in ruby and test work is good chance for do it, why not? ;)
+
 Benchmarks:
 ---
 
